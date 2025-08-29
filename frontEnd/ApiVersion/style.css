@@ -1,0 +1,60 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+th input, th select {
+  width: 90%;
+  margin-top: 5px;
+  padding: 4px;
+  font-size: 12px;
+}
+
+.table-loading {
+  filter: blur(3px);       
+  pointer-events: none;  
+  opacity: 0.5;         
+  transition: filter 0.3s, opacity 0.3s;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+tbody.blur {
+  filter: blur(2px);
+  pointer-events: none;
+  opacity: 0.8;
+}

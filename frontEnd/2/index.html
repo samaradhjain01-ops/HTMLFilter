@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Directory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Employee Directory</h1>
+
+  <table id="employeeTable">
+    <thead>
+      <tr>
+        <th>Name <br><input type="text" id="filterName" placeholder="Search"></th>
+        <th>Department <br>
+          <select id="filterDept">
+            <option value="">All</option>
+          </select>
+        </th>
+        <!-- <th>Age <br><input type="number" id="filterAge" placeholder="Age"></th> -->
+
+        <th>
+  Age <br>
+  <select id="filterAge">
+    <option value="">All</option>
+    <option value="toddler">👶 Toddler (1–3)</option>
+    <option value="minor">🧒 Minor (3–18)</option>
+    <option value="young">🧑 Young (18–50)</option>
+    <option value="senior">👴 Senior Citizen (50+)</option>
+  </select>
+</th>  
+
+        <th>Email <br><input type="text" id="filterEmail" placeholder="Search"></th>
+        <th>City <br>
+          <select id="filterCity">
+            <option value="">All</option>
+          </select>
+        </th>
+      </tr>
+      <tr>
+        <th colspan="5">Employees</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Employee Data -->
+  <script src="employees.js"></script>
+  <!-- Script Logic -->
+  <script src="script.js"></script>
+</body>
+</html>

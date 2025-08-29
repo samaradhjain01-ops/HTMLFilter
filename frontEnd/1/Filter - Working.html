@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Table Filters</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      position: relative;
+    }
+
+    th {
+      background-color: #f9f9f9;
+    }
+
+    .filter-icon {
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+
+    .filter-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 5px;
+      z-index: 100;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .filter-menu label {
+      display: block;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    .filter-menu input[type="radio"],
+    .filter-menu input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    .filter-menu button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Employee Table with Advanced Filters</h2>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th>
+        Name
+        <span class="filter-icon" data-column="0">&#x1F5D2;</span>
+        <div class="filter-menu" data-menu="0">
+          <label><input type="radio" name="nameFilter" value="asc"> Ascending</label>
+          <label><input type="radio" name="nameFilter" value="desc"> Descending</label>
+          <label><input type="radio" name="nameFilter" value="startsWithJ"> Starts with "J"</label>
+          <button onclick="clearNameFilter()">Clear</button>
+        </div>
+      </th>
+      <th>
+        Age
+        <span class="filter-icon" data-column="1">&#x1F5D2;</span>
+        <div class="filter-menu" data-menu="1">
+          <label><input type="checkbox" value="lt18"> Less than 18</label>
+          <label><input type="checkbox" value="18to30"> 18 to 30</label>
+          <label><input type="checkbox" value="30to40"> 30 to 40</label>
+          <label><input type="checkbox" value="gt40"> Greater than 40</label>
+          <button onclick="clearAgeFilter()">Clear</button>
+        </div>
+      </th>
+      <th>Department</th>
+      <th>Email</th>
+      <th>City</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Jane Doe</td><td>25</td><td>Marketing</td><td>jane.doe@example.com</td><td>New York</td></tr>
+    <tr><td>John Smith</td><td>42</td><td>Engineering</td><td>john.smith@example.com</td><td>San Francisco</td></tr>
+    <tr><td>Mary Johnson</td><td>36</td><td>HR</td><td>mary.johnson@example.com</td><td>Chicago</td></tr>
+    <tr><td>James Wilson</td><td>17</td><td>Engineering</td><td>james.wilson@example.com</td><td>Boston</td></tr>
+    <tr><td>Linda Brown</td><td>29</td><td>Finance</td><td>linda.brown@example.com</td><td>Los Angeles</td></tr>
+    <tr><td>Joey Adams</td><td>31</td><td>Marketing</td><td>joey.adams@example.com</td><td>New York</td></tr>
+  </tbody>
+</table>
+
+<script>
+  const rows = Array.from(document.querySelectorAll("#dataTable tbody tr"));
+  const filterIcons = document.querySelectorAll(".filter-icon");
+  const filterMenus = document.querySelectorAll(".filter-menu");
+
+  let nameFilter = '';
+  let ageFilterSet = new Set();
+
+  // Toggle filter menu visibility
+  filterIcons.forEach(icon => {
+    icon.addEventListener("click", () => {
+      const menuIndex = icon.getAttribute("data-column");
+      filterMenus.forEach(menu => {
+        menu.style.display = menu.getAttribute("data-menu") === menuIndex
+          ? (menu.style.display === "block" ? "none" : "block")
+          : "none";
+      });
+    });
+  });
+
+  // Close filter menus when clicking outside
+  document.addEventListener("click", e => {
+    if (!e.target.classList.contains("filter-icon") && !e.target.closest(".filter-menu")) {
+      filterMenus.forEach(menu => menu.style.display = "none");
+    }
+  });
+
+  // Name filter logic
+  const nameRadios = document.querySelectorAll('input[name="nameFilter"]');
+  nameRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      nameFilter = radio.value;
+      applyFilters();
+    });
+  });
+
+  function clearNameFilter() {
+    nameRadios.forEach(r => r.checked = false);
+    nameFilter = '';
+    applyFilters();
+  }
+
+  // Age filter logic
+  const ageCheckboxes = document.querySelectorAll('[data-menu="1"] input[type="checkbox"]');
+  ageCheckboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+      ageFilterSet.clear();
+      ageCheckboxes.forEach(box => {
+        if (box.checked) ageFilterSet.add(box.value);
+      });
+      applyFilters();
+    });
+  });
+
+  function clearAgeFilter() {
+    ageCheckboxes.forEach(cb => cb.checked = false);
+    ageFilterSet.clear();
+    applyFilters();
+  }
+
+  // Apply all filters
+  function applyFilters() {
+    let filteredRows = [...rows];
+
+    // Apply name filter
+    if (nameFilter === "asc" || nameFilter === "desc") {
+      filteredRows.sort((a, b) => {
+        const nameA = a.cells[0].textContent.trim().toLowerCase();
+        const nameB = b.cells[0].textContent.trim().toLowerCase();
+        return nameFilter === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+      });
+    } else if (nameFilter === "startsWithJ") {
+      filteredRows = filteredRows.filter(row =>
+        row.cells[0].textContent.trim().toLowerCase().startsWith("j")
+      );
+    }
+
+    // Apply age filter
+    if (ageFilterSet.size > 0) {
+      filteredRows = filteredRows.filter(row => {
+        const age = parseInt(row.cells[1].textContent.trim());
+        let match = false;
+        for (let filter of ageFilterSet) {
+          if (
+            (filter === "lt18" && age < 18) ||
+            (filter === "18to30" && age >= 18 && age <= 30) ||
+            (filter === "30to40" && age > 30 && age <= 40) ||
+            (filter === "gt40" && age > 40)
+          ) {
+            match = true;
+            break;
+          }
+        }
+        return match;
+      });
+    }
+
+    // Render updated rows
+    const tbody = document.querySelector("#dataTable tbody");
+    tbody.innerHTML = "";
+    filteredRows.forEach(row => tbody.appendChild(row));
+  }
+</script>
+
+</body>
+</html>
